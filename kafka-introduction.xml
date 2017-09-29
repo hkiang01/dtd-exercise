@@ -1,12 +1,11 @@
 <?xml version="1.0"?>
 <!DOCTYPE website [
-<!ELEMENT website (logo*,pages)>
-<!ELEMENT logo (#PCDATA|image)*>
-<!ELEMENT pages (page)+>
-<!ELEMENT page (logo*,section)+>
-<!ATTLIST page currentpage (false|true) "false">
+<!ELEMENT website (image*,pages,footer)>
 <!ELEMENT image (#PCDATA)>
 <!ATTLIST image url CDATA #REQUIRED>
+<!ELEMENT pages (page)+>
+<!ELEMENT page (image*,section)+>
+<!ATTLIST page currentpage (false|true) "false">
 <!ELEMENT section (header,body)>
 <!ELEMENT header (#PCDATA)>
 <!ATTLIST header size (xxxsmall|xxsmall|xsmall|small|normal|large|xlarge|xxlarge|xxxlarge) "normal">
@@ -17,16 +16,14 @@
 <!ATTLIST list ordered (false|true) "false">
 <!ELEMENT item (#PCDATA|p|link)*>
 <!ATTLIST link url CDATA #REQUIRED>
+<!ELEMENT footer (#PCDATA)>
 <!ENTITY trademark "$#174;">
 ]>
 <website>
 	<pages>
 		<page>Home</page>
 		<page currentpage="true">Introduction
-			<logo>
-			Apache Kafka - A distributed streaming platform
-				<image url="https://kafka.apache.org/images/logo.png"></image>
-			</logo>
+			<image url="https://kafka.apache.org/images/logo.png">Apache Kafka - A distributed streaming platform</image>
 			<section>
 				<header size="large">Introduction</header>
 				<body>
@@ -229,4 +226,7 @@
 		<page>Contact Us</page>
 		<page>Apache</page>
 	</pages>
+	<footer>
+The contents of this website are © 2016 Apache Software Foundation under the terms of the Apache License v2.
+Apache Kafka, Kafka, and the Kafka logo are either registered trademarks or trademarks of The Apache Software Foundation in the United States and other countries.</footer>
 </website>
