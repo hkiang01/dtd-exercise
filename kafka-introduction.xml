@@ -6,13 +6,12 @@
 <!ATTLIST image url CDATA #REQUIRED>
 <!ELEMENT section (header,body)>
 <!ELEMENT header (#PCDATA)>
-<!ELEMENT body (#PCDATA|p|orderedlist|unorderedlist|image)*>
+<!ELEMENT body (#PCDATA|p|list|image)*>
 <!ELEMENT p (#PCDATA|p|link)*>
 <!ATTLIST p style (bold|italics) "">
-<!ELEMENT orderedlist (item)+>
+<!ELEMENT list (item)+>
+<!ATTLIST list ordered (false|true) "false">
 <!ELEMENT item (#PCDATA|p|link)*>
-<!ELEMENT unorderedlist (item)+>
-<!ELEMENT link (#PCDATA)>
 <!ATTLIST link url CDATA #REQUIRED>
 <!ENTITY trademark "$#174;">
 ]>
@@ -30,20 +29,20 @@
 			What exactly does that mean?
 			</p>
 			<p>We think of a streaming platform as having three key capabilities:</p>
-			<orderedlist>
+			<list ordered="true">
 				<item>It lets you publish and subscribe to streams of records. In this respect it is similar to a message queue or enterprise messaging system.</item>
 				<item>It lets you store streams of records in a fault-tolerant way.</item>
 				<item>It lets you process streams of records as they occur.</item>
-			</orderedlist>
+			</list>
 			<p>What is Kafka good for?</p>
 			<p>It gets used for two broad classes of application:</p>
-			<orderedlist>
+			<list ordered="true">
 				<item>Building real-time streaming data pipelines that reliably get data between systems or applications</item>
 				<item>Building real-time streaming applications that transform or react to the streams of data</item>
-			</orderedlist>
+			</list>
 			<p>To understand how Kafka does these things, let's dive in and explore Kafka's capabilities from the bottom up.</p>
 			<p>First a few concepts:</p>
-			<unorderedlist>
+			<list>
 				<item>Kafka is run as a cluster on one or more servers.</item>
 				<item>The Kafka cluster stores streams of
 					<p style="italics">records</p>
@@ -51,10 +50,10 @@
 					<p style="italics">topics.</p>
 				</item>
 				<item>Each record consists of a key, a value, and a timestamp.</item>
-			</unorderedlist>
+			</list>
 			<image url="https://kafka.apache.org/0110/images/kafka-apis.png"></image>
 			<p>Kafka has four core APIs:</p>
-			<unorderedlist>
+			<list>
 				<item>
 					The
 						<link url="https://kafka.apache.org/documentation.html#producerapi">Producer API</link>
@@ -77,7 +76,7 @@
 					<link url="https://kafka.apache.org/documentation.html#connect">Connector API</link>
 					allows building and running reusable producers or consumers that connect Kafka topics to existing applications or data systems. For example, a connector to a relational database might capture every change to a table.
 				</item>
-			</unorderedlist>
+			</list>
 			<p>
 				In Kafka the communication between the clients and the servers is done with a simple, high-performance, language agnostic
 				<link url="https://kafka.apache.org/protocol.html">TCP protocol.</link>
@@ -141,11 +140,11 @@
 	<section>
 		<header>Guarantees</header>
 		<p>At a high-level Kafka gives the following guarantees:</p>
-		<unorderedlist>
+		<list>
 			<item>Messages sent by a producer to a particular topic partition will be appended in the order they are sent. That is, if a record M1 is sent by the same producer as a record M2, and M1 is sent first, then M1 will have a lower offset than M2 and appear earlier in the log.</item>
 			<item>A consumer instance sees records in the order they are stored in the log.</item>
 			<item>For a topic with replication factor N, we will tolerate up to N-1 server failures without losing any records committed to the log.</item>
-		</unorderedlist>
+		</list>
 		<p>More details on these guarantees are given in the design section of the documentation.</p>
 	</section>
 	<section>
