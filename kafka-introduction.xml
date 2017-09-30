@@ -1,21 +1,22 @@
 <?xml version="1.0"?>
 <!DOCTYPE website [
-<!ELEMENT website (image*,pages,footer)>
+<!ELEMENT website (image?,pages,footer)>
 <!ELEMENT image (#PCDATA)>
 <!ATTLIST image url CDATA #REQUIRED>
 <!ELEMENT pages (page)+>
-<!ELEMENT page (image*,section)+>
+<!ELEMENT page (image|section)+>
 <!ATTLIST page currentpage (false|true) "false">
 <!ELEMENT section (header,body)>
 <!ELEMENT header (#PCDATA)>
 <!ATTLIST header size (xxxsmall|xxsmall|xsmall|small|normal|large|xlarge|xxlarge|xxxlarge) "normal">
-<!ELEMENT body (#PCDATA|p|list|image)*>
+<!ELEMENT body (p|list|image)+>
 <!ELEMENT p (#PCDATA|p|link)*>
 <!ATTLIST p style (bold|italics) "">
+<!ELEMENT link (#PCDATA)>
+<!ATTLIST link url CDATA #REQUIRED>
 <!ELEMENT list (item)+>
 <!ATTLIST list ordered (false|true) "false">
-<!ELEMENT item (#PCDATA|p|link)*>
-<!ATTLIST link url CDATA #REQUIRED>
+<!ELEMENT item (#PCDATA|link)*>
 <!ELEMENT footer (#PCDATA)>
 <!ENTITY trademark "$#174;">
 ]>
