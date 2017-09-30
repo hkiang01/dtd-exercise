@@ -4,26 +4,29 @@
 <!ELEMENT image (#PCDATA)>
 <!ATTLIST image url CDATA #REQUIRED>
 <!ELEMENT pages (page)+>
-<!ELEMENT page (image|section)+>
+<!ELEMENT page (image|section)*>
+<!ATTLIST page pagelabel CDATA #REQUIRED>
 <!ATTLIST page currentpage (false|true) "false">
 <!ELEMENT section (header,body)>
 <!ELEMENT header (#PCDATA)>
 <!ATTLIST header size (xxxsmall|xxsmall|xsmall|small|normal|large|xlarge|xxlarge|xxxlarge) "normal">
 <!ELEMENT body (p|list|image)+>
 <!ELEMENT p (#PCDATA|p|link)*>
-<!ATTLIST p style (bold|italics) "">
+<!ATTLIST p style (bold|italics|normal) "normal">
 <!ELEMENT link (#PCDATA)>
 <!ATTLIST link url CDATA #REQUIRED>
 <!ELEMENT list (item)+>
 <!ATTLIST list ordered (false|true) "false">
-<!ELEMENT item (#PCDATA|link)*>
+<!ELEMENT item (#PCDATA|link|p)*>
 <!ELEMENT footer (#PCDATA)>
 <!ENTITY trademark "$#174;">
+<!ENTITY copyright "&#169;">
 ]>
 <website>
 	<pages>
-		<page>Home</page>
-		<page currentpage="true">Introduction
+		<page pagelabel="Home">
+        </page>
+		<page pagelabel="Introduction" currentpage="true">
 			<image url="https://kafka.apache.org/images/logo.png">Apache Kafka - A distributed streaming platform</image>
 			<section>
 				<header size="large">Introduction</header>
@@ -56,7 +59,7 @@
 						</item>
 						<item>Each record consists of a key, a value, and a timestamp.</item>
 					</list>
-					<image url="https://kafka.apache.org/0110/images/kafka-apis.png"></image>
+					<image url="https://kafka.apache.org/0110/images/kafka-apis.png" />
 					<p>Kafka has four core APIs:</p>
 					<list>
 						<item>
@@ -73,7 +76,7 @@
 							The
 								<link url="https://kafka.apache.org/documentatin/streams">Streams API</link>
 							 allows an application to act as a
-							 <p style="italcs">stream processor,</p>
+							 <p style="italics">stream processor,</p>
 							 consuming an input stream from one or more topics and producing an output stream to one or more output topics, effectively transforming the input streams to output streams.
 						</item>
 						<item>
@@ -96,14 +99,14 @@
 					<p>Let's first dive into the core abstraction Kafka provides for a stream of records—the topic.</p>
 					<p>A topic is a category or feed name to which records are published. Topics in Kafka are always multi-subscriber; that is, a topic can have zero, one, or many consumers that subscribe to the data written to it.</p>
 					<p>For each topic, the Kafka cluster maintains a partitioned log that looks like this:</p>
-					<image url="https://kafka.apache.org/0110/images/log_anatomy.png"></image>
+					<image url="https://kafka.apache.org/0110/images/log_anatomy.png" />
 					<p>
 						Each partition is an ordered, immutable sequence of records that is continually appended to—a structured commit log. The records in the partitions are each assigned a sequential id number called the
 						<p style="italics">offset</p>
 						that uniquely identifies each record within the partition.
 					</p>
 					<p>The Kafka cluster retains all published records—whether or not they have been consumed—using a configurable retention period. For example, if the retention policy is set to two days, then for the two days after a record is published, it is available for consumption, after which it will be discarded to free up space. Kafka's performance is effectively constant with respect to data size so storing data for a long time is not a problem.</p>
-					<image url="https://kafka.apache.org/0110/images/log_consumer.png"></image>
+					<image url="https://kafka.apache.org/0110/images/log_consumer.png" />
 					<p>In fact, the only metadata retained on a per-consumer basis is the offset or position of that consumer in the log. This offset is controlled by the consumer: normally a consumer will advance its offset linearly as it reads records, but, in fact, since the position is controlled by the consumer it can consume records in any order it likes. For example a consumer can reset to an older offset to reprocess data from the past or skip ahead to the most recent record and start consuming from "now".</p>
 					<p>This combination of features means that Kafka consumers are very cheap—they can come and go without much impact on the cluster or on other consumers. For example, you can use our command line tools to "tail" the contents of any topic without changing what is consumed by any existing consumers.</p>
 					<p>The partitions in the log serve several purposes. First, they allow the log to scale beyond a size that will fit on a single server. Each individual partition must fit on the servers that host it, but a topic may have many partitions so it can handle an arbitrary amount of data. Second they act as the unit of parallelism—more on that in a bit.</p>
@@ -131,7 +134,7 @@
 					</p>
 					<p>If all the consumer instances have the same consumer group, then the records will effectively be load balanced over the consumer instances.</p>
 					<p>If all the consumer instances have different consumer groups, then each record will be broadcast to all the consumer processes.</p>
-					<image url="https://kafka.apache.org/0110/images/consumer-groups.png"></image>
+					<image url="https://kafka.apache.org/0110/images/consumer-groups.png" />
 					<p>A two server Kafka cluster hosting four partitions (P0-P3) with two consumer groups. Consumer group A has two consumer instances and group B has four.</p>
 					<p>More commonly, however, we have found that topics have a small number of consumer groups, one for each "logical subscriber". Each group is composed of many consumer instances for scalability and fault tolerance. This is nothing more than publish-subscribe semantics where the subscriber is a cluster of consumers instead of a single process.</p>
 					<p>The way consumption is implemented in Kafka is by dividing up the partitions in the log over the consumer instances so that each instance is the exclusive consumer of a "fair share" of partitions at any point in time. This process of maintaining membership in the group is handled by the Kafka protocol dynamically. If new instances join the group they will take over some partitions from other members of the group; if an instance dies, its partitions will be distributed to the remaining instances.</p>
@@ -144,13 +147,15 @@
 			</section>
 			<section>
 				<header>Guarantees</header>
-				<p>At a high-level Kafka gives the following guarantees:</p>
-				<list>
-					<item>Messages sent by a producer to a particular topic partition will be appended in the order they are sent. That is, if a record M1 is sent by the same producer as a record M2, and M1 is sent first, then M1 will have a lower offset than M2 and appear earlier in the log.</item>
-					<item>A consumer instance sees records in the order they are stored in the log.</item>
-					<item>For a topic with replication factor N, we will tolerate up to N-1 server failures without losing any records committed to the log.</item>
-				</list>
-				<p>More details on these guarantees are given in the design section of the documentation.</p>
+				<body>
+					<p>At a high-level Kafka gives the following guarantees:</p>
+					<list>
+						<item>Messages sent by a producer to a particular topic partition will be appended in the order they are sent. That is, if a record M1 is sent by the same producer as a record M2, and M1 is sent first, then M1 will have a lower offset than M2 and appear earlier in the log.</item>
+						<item>A consumer instance sees records in the order they are stored in the log.</item>
+						<item>For a topic with replication factor N, we will tolerate up to N-1 server failures without losing any records committed to the log.</item>
+					</list>
+					<p>More details on these guarantees are given in the design section of the documentation.</p>
+				</body>
 			</section>
 			<section>
 				<header>Kafka as a Messaging System</header>
@@ -201,33 +206,34 @@
 			</section>
 			<section>
 				<header>Putting the Pieces Together</header>
-				<p>This combination of messaging, storage, and stream processing may seem unusual but it is essential to Kafka's role as a streaming platform.</p>
-				<p>A distributed file system like HDFS allows storing static files for batch processing. Effectively a system like this allows storing and processing
-					<p style="italics">historical</p>
-					data from the past.
-				</p>
-				<p>A traditional enterprise messaging system allows processing future messages that will arrive after you subscribe. Applications built in this way process future data as it arrives.</p>
-				<p>Kafka combines both of these capabilities, and the combination is critical both for Kafka usage as a platform for streaming applications as well as for streaming data pipelines.</p>
-				<p>By combining storage and low-latency subscriptions, streaming applications can treat both past and future data the same way. That is a single application can process historical, stored data but rather than ending when it reaches the last record it can keep processing as future data arrives. This is a generalized notion of stream processing that subsumes batch processing as well as message-driven applications.</p>
-				<p>Likewise for streaming data pipelines the combination of subscription to real-time events make it possible to use Kafka for very low-latency pipelines; but the ability to store data reliably make it possible to use it for critical data where the delivery of data must be guaranteed or for integration with offline systems that load data only periodically or may go down for extended periods of time for maintenance. The stream processing facilities make it possible to transform data as it arrives.</p>
-				<p>For more information on the guarantees, apis, and capabilities Kafka provides see the rest of the
-					<link url="https://kafka.apache.org/documentation.html">documentation</link>
-				</p>
+                <body>
+                    <p>This combination of messaging, storage, and stream processing may seem unusual but it is essential to Kafka's role as a streaming platform.</p>
+                    <p>A distributed file system like HDFS allows storing static files for batch processing. Effectively a system like this allows storing and processing
+                        <p style="italics">historical</p>
+                        data from the past.
+                    </p>
+                    <p>A traditional enterprise messaging system allows processing future messages that will arrive after you subscribe. Applications built in this way process future data as it arrives.</p>
+                    <p>Kafka combines both of these capabilities, and the combination is critical both for Kafka usage as a platform for streaming applications as well as for streaming data pipelines.</p>
+                    <p>By combining storage and low-latency subscriptions, streaming applications can treat both past and future data the same way. That is a single application can process historical, stored data but rather than ending when it reaches the last record it can keep processing as future data arrives. This is a generalized notion of stream processing that subsumes batch processing as well as message-driven applications.</p>
+                    <p>Likewise for streaming data pipelines the combination of subscription to real-time events make it possible to use Kafka for very low-latency pipelines; but the ability to store data reliably make it possible to use it for critical data where the delivery of data must be guaranteed or for integration with offline systems that load data only periodically or may go down for extended periods of time for maintenance. The stream processing facilities make it possible to transform data as it arrives.</p>
+                    <p>For more information on the guarantees, apis, and capabilities Kafka provides see the rest of the
+                        <link url="https://kafka.apache.org/documentation.html">documentation</link>
+                    </p>
+                </body>
 			</section>
 		</page>
-		<page>Quickstart</page>
-		<page>Use Cases</page>
-		<page>Documentation</page>
-		<page>Performance</page>
-		<page>Powered By</page>
-		<page>Project Info</page>
-		<page>Ecosystem</page>
-		<page>Clients</page>
-		<page>Events</page>
-		<page>Contact Us</page>
-		<page>Apache</page>
+        <page pagelabel="Quickstart"/>
+		<page pagelabel="Use Cases" />
+		<page pagelabel="Documentation" />
+		<page pagelabel="Performance" />
+		<page pagelabel="Powered By" />
+		<page pagelabel="Project Info" />
+		<page pagelabel="Ecosystem" />
+		<page pagelabel="Clients" />
+		<page pagelabel="Events" />
+		<page pagelabel="Contact Us" />
+		<page pagelabel="Apache" />
 	</pages>
-	<footer>
-The contents of this website are © 2016 Apache Software Foundation under the terms of the Apache License v2.
+    <footer>The contents of this website are &copyright; 2016 Apache Software Foundation under the terms of the Apache License v2.
 Apache Kafka, Kafka, and the Kafka logo are either registered trademarks or trademarks of The Apache Software Foundation in the United States and other countries.</footer>
 </website>
