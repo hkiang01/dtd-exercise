@@ -19,7 +19,7 @@
 <!ATTLIST list ordered (false|true) "false">
 <!ELEMENT item (#PCDATA|link|p)*>
 <!ELEMENT footer (#PCDATA)>
-<!ENTITY trademark "$#174;">
+<!ENTITY trademark "$#8482;">
 <!ENTITY copyright "&#169;">
 ]>
 <website>
