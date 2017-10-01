@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <!DOCTYPE website [
-<!ELEMENT website (image?,pages,footer)>
+<!ELEMENT website (image?,pages)>
 <!ELEMENT image (#PCDATA)>
 <!ATTLIST image url CDATA #REQUIRED>
 <!ELEMENT pages (page)+>
-<!ELEMENT page (image|section)*>
+<!ELEMENT page ((image|section)*,footer?)>
 <!ATTLIST page pagelabel CDATA #REQUIRED>
 <!ATTLIST page currentpage (false|true) "false">
 <!ELEMENT section (p|list|image)+>
@@ -16,7 +16,7 @@
 <!ELEMENT list (item)+>
 <!ATTLIST list ordered (false|true) "false">
 <!ELEMENT item (link|p)+>
-<!ELEMENT footer (#PCDATA)>
+<!ELEMENT footer (p)>
 <!ENTITY trademark "$#8482;">
 <!ENTITY copyright "&#169;">
 ]>
@@ -189,6 +189,8 @@
 					<link url="https://kafka.apache.org/documentation.html">documentation</link>
 				</p>
 			</section>
+			<footer><p>The contents of this website are &copyright; 2016 Apache Software Foundation under the terms of the Apache License v2.
+				Apache Kafka, Kafka, and the Kafka logo are either registered trademarks or trademarks of The Apache Software Foundation in the United States and other countries.</p></footer>
 		</page>
         <page pagelabel="Quickstart"/>
 		<page pagelabel="Use Cases" />
@@ -202,6 +204,4 @@
 		<page pagelabel="Contact Us" />
 		<page pagelabel="Apache" />
 	</pages>
-    <footer>The contents of this website are &copyright; 2016 Apache Software Foundation under the terms of the Apache License v2.
-Apache Kafka, Kafka, and the Kafka logo are either registered trademarks or trademarks of The Apache Software Foundation in the United States and other countries.</footer>
 </website>
