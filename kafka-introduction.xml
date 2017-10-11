@@ -15,10 +15,11 @@
 <!-- similar to a div in HTML, a section must contain content, either text, list, or image -->
 <!ELEMENT section (p|list|image)+>
 <!ATTLIST section header CDATA #IMPLIED>
+<!ATTLIST section style (bold|italics|normal) "normal">
 
 <!-- text of varying style must be able to be recursively embedded, support links -->
 <!ELEMENT p (#PCDATA|p|link)*>
-<!ATTLIST p style (bold|italics|normal) "normal">
+<!ATTLIST p style (bold|italics|normal) "bold">
 
 <!-- very similar to a src in HTML -->
 <!ELEMENT link (#PCDATA)>
