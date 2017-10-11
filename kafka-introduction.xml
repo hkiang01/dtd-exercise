@@ -1,22 +1,38 @@
 <?xml version="1.0"?>
 <!DOCTYPE website [
 <!ELEMENT website (image?,pages)>
+
+<!-- very similar to img in HTML -->
 <!ELEMENT image (#PCDATA)>
 <!ATTLIST image url CDATA #REQUIRED>
+
+<!-- a website is composed of pages, which can be viewed or hidden (currentpage) -->
 <!ELEMENT pages (page)+>
 <!ELEMENT page ((image|section)*,footer?)>
 <!ATTLIST page pagelabel CDATA #REQUIRED>
 <!ATTLIST page currentpage (false|true) "false">
+
+<!-- similar to a div in HTML, a section must contain content, either text, list, or image -->
 <!ELEMENT section (p|list|image)+>
 <!ATTLIST section header CDATA #IMPLIED>
+
+<!-- text of varying style must be able to be recursively embedded, support links -->
 <!ELEMENT p (#PCDATA|p|link)*>
 <!ATTLIST p style (bold|italics|normal) "normal">
+
+<!-- very similar to a src in HTML -->
 <!ELEMENT link (#PCDATA)>
 <!ATTLIST link url CDATA #REQUIRED>
+
+<!-- lists can be ordered or unordered and contain text, e.g., p -->
 <!ELEMENT list (item)+>
 <!ATTLIST list ordered (false|true) "false">
 <!ELEMENT item (link|p)+>
+
+<!-- some pages might have footers -->
 <!ELEMENT footer (p)>
+
+<!-- these entities are for ™ and ©, respectively-->
 <!ENTITY trademark "$#8482;">
 <!ENTITY copyright "&#169;">
 ]>
