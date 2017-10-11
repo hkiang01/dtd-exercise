@@ -209,7 +209,7 @@
 			<footer><p>The contents of this website are &copyright; 2016 Apache Software Foundation under the terms of the Apache License v2.
 				Apache Kafka, Kafka, and the Kafka logo are either registered trademarks or trademarks of The Apache Software Foundation in the United States and other countries.</p></footer>
 		</page>
-        <page pagelabel="Quickstart"/>
+	        <page pagelabel="Quickstart"/>
 		<page pagelabel="Use Cases" />
 		<page pagelabel="Documentation" />
 		<page pagelabel="Performance" />
