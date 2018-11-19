@@ -44,7 +44,7 @@
 		<page pagelabel="Introduction" currentpage="true">
 			<image url="https://kafka.apache.org/images/logo.png">Apache Kafka - A distributed streaming platform</image>
 			<section header="Introduction">
-				<p style="bold">
+				<p>
 				Apache Kafka&trademark; is
 					<p style="italics">a distributed streaming platform.</p>
 				What exactly does that mean?
